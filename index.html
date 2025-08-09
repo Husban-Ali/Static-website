@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cyber-Lab Presentation</title>
+  <title>Cyber Security Demo</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    /* Reset & basics */
     * {
       box-sizing: border-box;
       margin: 0; padding: 0;
@@ -48,7 +47,6 @@
       display: block;
       margin-top: 6px;
     }
-    /* Container */
     .container {
       max-width: 960px;
       width: 100%;
@@ -58,7 +56,6 @@
       padding: 28px 32px;
       backdrop-filter: blur(12px);
     }
-    /* Sections */
     section {
       margin-bottom: 36px;
       border-left: 4px solid #238636;
@@ -67,7 +64,6 @@
     section:last-child {
       margin-bottom: 0;
     }
-    /* Code block styling */
     pre {
       background: #0d1117;
       color: #39d353;
@@ -82,7 +78,6 @@
     code {
       font-family: 'Roboto Mono', monospace;
     }
-    /* Form styling */
     form {
       display: flex;
       flex-direction: column;
@@ -132,7 +127,6 @@
     button:hover {
       background: linear-gradient(90deg, #2ea043, #238636);
     }
-    /* Preview box */
     #previewArea {
       background: #0d1117;
       border: 2px dashed #238636;
@@ -145,19 +139,6 @@
       white-space: pre-wrap;
       user-select: text;
     }
-    /* Warning box */
-    .warning {
-      background: #ffe8a1;
-      color: #6b4c00;
-      padding: 14px 18px;
-      border-radius: 10px;
-      font-weight: 700;
-      margin-bottom: 18px;
-      user-select: none;
-      text-align: center;
-      box-shadow: 0 4px 8px #d9b300cc;
-    }
-    /* Responsive */
     @media (max-width: 600px) {
       .container {
         padding: 24px 18px;
@@ -173,94 +154,77 @@
 </head>
 <body>
   <div class="container" role="main">
-    <h1>Cyber‑Lab Presentation</h1>
-    <div class="warning">⚠️ This page is for educational purposes only. Do not deploy publicly.</div>
+    <h1>Cyber Security Demo</h1>
 
     <section aria-labelledby="sec1">
-      <h2 id="sec1">1. Hard-coded client secret (Insecure)</h2>
-      <p>Storing API keys or secrets directly in frontend code exposes them to anyone viewing the source.</p>
-      <pre><code>// DON'T DO THIS (demo only)
-const INSECURE_API_KEY = "AKIA-EXAMPLE-KEY-12345";
-console.log("Using API key:", INSECURE_API_KEY);
-</code></pre>
-      <small>Mitigation: Store secrets securely on backend; use environment variables.</small>
+      <h2 id="sec1">1. Hard-coded Secrets in Frontend</h2>
+      <p>Storing API keys or sensitive information directly in frontend code exposes them to everyone viewing the source.</p>
+      <pre><code>const SECRET_KEY = "12345-ABCDE";</code></pre>
+      <small>Risk: Unauthorized access and data leaks.</small>
     </section>
 
     <section aria-labelledby="sec2">
-      <h2 id="sec2">2. Insecure contact form (Demo only)</h2>
-      <p>This form simulates a POST request to an insecure endpoint. Data sent over HTTP can be intercepted.</p>
-      <form id="demoForm" action="http://localhost:3000/submit" method="POST" novalidate>
-        <label for="f_name">Name</label>
-        <input type="text" id="f_name" name="name" placeholder="Your full name" autocomplete="off" />
-        <label for="f_email">Email</label>
-        <input type="email" id="f_email" name="email" placeholder="you@example.com" autocomplete="off" />
-        <label for="f_msg">Message</label>
-        <textarea id="f_msg" name="message" placeholder="Type your message here..."></textarea>
-        <button type="submit">Send (Demo)</button>
+      <h2 id="sec2">2. Insecure Contact Form</h2>
+      <p>Data sent over unencrypted HTTP or without validation can be intercepted or manipulated.</p>
+      <form id="contactForm" action="http://localhost:3000/submit" method="POST" novalidate>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your full name" autocomplete="off" />
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="off" />
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Your message here..."></textarea>
+        <button type="submit">Send</button>
       </form>
-      <small>Mitigation: Use HTTPS endpoints and validate inputs on server side.</small>
+      <small>Use HTTPS and validate inputs on server.</small>
     </section>
 
     <section aria-labelledby="sec3">
-      <h2 id="sec3">3. Unsafe DOM manipulation (XSS risk)</h2>
-      <p>Rendering user input using <code>innerHTML</code> without sanitization can cause cross-site scripting (XSS) attacks.</p>
-      <label for="previewInput">Type text to preview:</label>
-      <input id="previewInput" type="text" placeholder="Try typing &lt;script&gt;alert('xss')&lt;/script&gt;" autocomplete="off" />
+      <h2 id="sec3">3. Unsafe DOM Manipulation</h2>
+      <p>Using <code>innerHTML</code> to display user input can lead to Cross-Site Scripting (XSS) attacks.</p>
+      <label for="previewInput">Enter text to preview:</label>
+      <input id="previewInput" type="text" placeholder="Try &lt;script&gt;alert('XSS')&lt;/script&gt;" autocomplete="off" />
       <div style="margin-top:8px; display:flex; gap:12px;">
-        <button id="previewBtn">Preview (Unsafe)</button>
-        <button id="safePreviewBtn" style="background:#238636; border:none; color:#fff; padding:10px 16px; border-radius:8px; cursor:pointer;">Preview (Safe)</button>
+        <button id="unsafePreview">Preview Unsafe</button>
+        <button id="safePreview" style="background:#238636; border:none; color:#fff; padding:10px 16px; border-radius:8px; cursor:pointer;">Preview Safe</button>
       </div>
       <div id="previewArea" aria-live="polite"></div>
-      <small>Mitigation: Use <code>textContent</code> or sanitizers like DOMPurify before injecting HTML.</small>
+      <small>Safe preview uses textContent instead of innerHTML.</small>
     </section>
 
     <section aria-labelledby="sec4">
-      <h2 id="sec4">4. Third-party script inclusion (Supply-chain risk)</h2>
+      <h2 id="sec4">4. Third-Party Script Risks</h2>
       <p>Including external scripts from untrusted sources can introduce malicious code.</p>
-      <pre>&lt;script src="https://cdn.example.com/widget.js" integrity="..." crossorigin="anonymous"&gt;&lt;/script&gt;</pre>
-      <small>Mitigation: Use Subresource Integrity (SRI), strict Content Security Policy (CSP), and minimal third-party code.</small>
+      <pre><code>&lt;script src="https://cdn.example.com/script.js"&gt;&lt;/script&gt;</code></pre>
+      <small>Use Subresource Integrity (SRI) and Content Security Policy (CSP).</small>
     </section>
 
     <section aria-labelledby="sec5">
-      <h2 id="sec5">Exercise Sheet (For Your Cousin)</h2>
+      <h2 id="sec5">Exercise Questions</h2>
       <ul>
-        <li>Explain why hard-coded secrets in frontend code are dangerous.</li>
-        <li>Modify the preview code to use safe DOM methods instead of <code>innerHTML</code>.</li>
-        <li>Suggest how to securely handle contact form data.</li>
-        <li>Write a strict CSP header example to protect against XSS.</li>
+        <li>Why are hard-coded secrets in frontend code risky?</li>
+        <li>How to safely display user input instead of using <code>innerHTML</code>?</li>
+        <li>How to secure contact form data transmission?</li>
+        <li>What is a Content Security Policy (CSP) header?</li>
       </ul>
-      <small>Use only in isolated/local environments.</small>
     </section>
 
     <footer style="text-align:center; font-size: 0.85rem; color: #6e7681; margin-top: 36px; user-select:none;">
-      © 2025 Cyber-Lab Educational Demo. Not for production use.
+      © 2025 Cyber Security Demo
     </footer>
   </div>
 
   <script>
-    const INSECURE_API_KEY = "AKIA-EXAMPLE-KEY-12345";
-
-    // Form demo: prevent real submission, show payload in console and alert
-    document.getElementById('demoForm').addEventListener('submit', function(e) {
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const payload = {
-        name: document.getElementById('f_name').value,
-        email: document.getElementById('f_email').value,
-        message: document.getElementById('f_msg').value,
-        exposedKey: INSECURE_API_KEY
-      };
-      console.log("Demo payload (local only):", payload);
-      alert("Demo: Form data captured locally. Check console.");
+      alert('Form submission is disabled in this demo.');
     });
 
-    // Unsafe preview using innerHTML
-    document.getElementById('previewBtn').addEventListener('click', () => {
+    document.getElementById('unsafePreview').addEventListener('click', () => {
       const input = document.getElementById('previewInput').value;
       document.getElementById('previewArea').innerHTML = input;
     });
 
-    // Safe preview using textContent
-    document.getElementById('safePreviewBtn').addEventListener('click', () => {
+    document.getElementById('safePreview').addEventListener('click', () => {
       const input = document.getElementById('previewInput').value;
       document.getElementById('previewArea').textContent = input;
     });
