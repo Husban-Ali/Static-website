@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cyber-Lab — Single Page (Educational)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:system-ui,Segoe UI,Arial;margin:24px;background:#fafafa;color:#111}
+    .card{background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);max-width:900px;margin-bottom:18px}
+    .warn{background:#fff4e5;border-left:4px solid #ffa500;padding:10px;margin-bottom:10px}
+    input,textarea{width:100%;padding:8px;margin-top:6px;margin-bottom:10px;border-radius:6px;border:1px solid #ddd}
+    button{padding:8px 12px;border-radius:8px;border:none;background:#0b63d6;color:white;cursor:pointer}
+    pre{background:#f3f4f6;padding:12px;border-radius:8px;overflow:auto}
+    small{color:#666}
+  </style>
+</head>
+<body>
+  <h1>Cyber-Lab — Single Page (Educational)</h1>
+  <p class="warn"><strong>Warning:</strong> Ye page sirf local lab/learning ke liye hain. <em>Never</em> deploy publicly.</p>
+
+  <section class="card" id="about">
+    <h2>Purpose</h2>
+    <p>
+      Ye page kuch common insecure patterns highlight karta hai (so that your cousin can find & fix them).
+      Main <strong>exploit steps</strong> nahi bataunga — sirf vulnerabilities point out karunga.
+    </p>
+  </section>
+
+  <section class="card" id="insecure-key">
+    <h2>1) Hard-coded "API key" in client-side JS</h2>
+    <p>This demonstrates why secrets must not be in frontend code.</p>
+    <pre id="apiKeySnippet">
+// Insecure: secret visible in client code
+const INSECURE_API_KEY = "AKIA-EXAMPLE-KEY-12345";
+console.log("Using insecure API key (BAD):", INSECURE_API_KEY);
+    </pre>
+    <small>Lesson: move secrets to server / environment variables.</small>
+  </section>
+
+  <section class="card" id="insecure-form">
+    <h2>2) Contact form posting to an insecure endpoint</h2>
+    <p>Form submits to a placeholder URL. In real world, posting to an insecure or public endpoint can leak data.</p>
+
+    <form id="contactForm" action="http://localhost:3000/submit" method="POST">
+      <label>Name</label>
+      <input name="name" id="name" placeholder="Your name" />
+      <label>Email</label>
+      <input name="email" id="email" placeholder="you@example.com" />
+      <label>Message</label>
+      <textarea name="message" id="message" rows="4"></textarea>
+      <button type="submit">Send (Demo)</button>
+    </form>
+
+    <p><small>Note: This posts to <code>http://localhost:3000/submit</code> — set up a proper backend if collecting data. Do not use plain HTTP in production.</small></p>
+  </section>
+
+  <section class="card" id="xss-demo">
+    <h2>3) Unsafe DOM manipulation (XSS risk)</h2>
+    <p>This demo shows how using <code>innerHTML</code> with untrusted input is dangerous.</p>
+
+    <label>Enter text to "preview":</label>
+    <input id="previewInput" placeholder="Type something (don't paste secrets)" />
+    <button id="previewBtn">Preview</button>
+
+    <div style="margin-top:10px">
+      <strong>Preview area (unsafe):</strong>
+      <div id="previewArea" style="border:1px dashed #ddd;padding:8px;border-radius:6px;margin-top:6px"></div>
+    </div>
+
+    <p><small>Lesson: sanitize or avoid innerHTML; prefer textContent or trusted templates.</small></p>
+  </section>
+
+  <section class="card" id="third-party">
+    <h2>4) Third-party script inclusion (supply-chain risk)</h2>
+    <p>Below we *simulate* including a 3rd-party script. Using external scripts can be risky if the provider is compromised.</p>
+    <pre>&lt;script src="https://cdn.example.com/widget.js"&gt;&lt;/script&gt;</pre>
+    <p><small>Prefer only trusted providers, use Subresource Integrity (SRI) and CSP where possible.</small></p>
+  </section>
+
+  <section class="card" id="csp">
+    <h2>5) Example (weak) Content Security Policy</h2>
+    <p>Setting a strong CSP via server headers is important. Example of a weak policy (don't use as-is):</p>
+    <pre>Content-Security-Policy: default-src * 'unsafe-inline' 'unsafe-eval'</pre>
+    <p><small>Lesson: avoid unsafe-inline and unsafe-eval; restrict sources by origin and use nonces/hashes.</small></p>
+  </section>
+
+  <section class="card" id="exercise">
+    <h2>Quick exercises for your cousin (suggested)</h2>
+    <ul>
+      <li>Find and explain why the hard-coded key is bad.</li>
+      <li>Change the preview code to use <code>textContent</code> instead of <code>innerHTML</code>.</li>
+      <li>Replace the HTTP POST with a secure server endpoint (HTTPS) that validates inputs server-side.</li>
+      <li>Write a stricter CSP header and test it locally using a dev server that sets headers.</li>
+    </ul>
+    <p><small>Reminder: I won't provide exploit steps — just fix/mitigation guidance.</small></p>
+  </section>
+
+  <section class="card" id="meta">
+    <h2>Run locally (safe)</h2>
+    <ol>
+      <li>Save this file as <code>index.html</code> in a folder.</li>
+      <li>Open a terminal in that folder and run a local server, e.g.:
+        <pre>python3 -m http.server 8000</pre>
+      </li>
+      <li>Open <code>http://localhost:8000</code> in your browser.</li>
+    </ol>
+    <p><small>Do not expose this folder to the internet. Use a VM or disposable environment for testing.</small></p>
+  </section>
+
+  <footer style="margin-top:18px">
+    <small>Created for educational lab — do not use in production</small>
+  </footer>
+
+  <script>
+    // ===== Demo JS (contains intentionally insecure snippet for teaching) =====
+
+    // Insecure secret exposed in client code (intentional for lab)
+    const INSECURE_API_KEY = "AKIA-EXAMPLE-KEY-12345"; // <-- DO NOT DO THIS IN REAL APPS
+
+    // Contact form: prevent default and show what would be sent (so no real requests)
+    document.getElementById('contactForm').addEventListener('submit', function(e){
+      e.preventDefault(); // prevent real network call in this demo
+      const payload = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value,
+        exposedKey: INSECURE_API_KEY
+      };
+      // For education: show payload in console (do not log secrets in real world)
+      console.log("Demo submit payload (do not expose in real apps):", payload);
+      alert("Demo: form captured locally. Check console (only local).");
+    });
+
+    // Unsafe preview using innerHTML (intentional vulnerability)
+    document.getElementById('previewBtn').addEventListener('click', function(){
+      const v = document.getElementById('previewInput').value;
+      // INSECURE: using innerHTML with untrusted input leads to XSS
+      document.getElementById('previewArea').innerHTML = v;
+    });
+
+    // Note: the above demonstrates bad practice. To fix, use:
+    // document.getElementById('previewArea').textContent = v;
+  </script>
+</body>
+</html>
